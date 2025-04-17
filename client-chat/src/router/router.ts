@@ -4,10 +4,10 @@ import { renderChatPage } from '../views/chat';
 
 export function initRouter() {
   window.addEventListener('hashchange', handleRouteChange);
-  handleRouteChange(); // Викликаємо для першого рендерингу
+  handleRouteChange();
 
   function handleRouteChange() {
-    const route = window.location.hash.slice(1); // Отримуємо частину URL після #
+    const route = window.location.hash.slice(1);
     
     switch (route) {
       case 'login':
@@ -20,7 +20,7 @@ export function initRouter() {
         renderChatPage();
         break;
       default:
-        renderLoginPage(); // За замовчуванням — сторінка авторизації
+        renderLoginPage();
     }
   }
 }
