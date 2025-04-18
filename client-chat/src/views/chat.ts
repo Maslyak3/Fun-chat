@@ -1,8 +1,9 @@
+import { userList, renderUserList, fetchAllUsers } from "../components/user-list";
 import { renderAboutPage } from "./about";
 import { renderLoginPage, wsClient } from "./login";
 
 export function renderChatPage() {
-    const userData = localStorage.getItem('user');
+    const userData = sessionStorage.getItem('user');
     const username = userData ? JSON.parse(userData).login : "Guest"
     document.body.innerHTML = "";
 
@@ -35,4 +36,10 @@ export function renderChatPage() {
         wsClient.close();
         renderLoginPage();
     });
+    const userListElement = userList();
+    chatContainer.appendChild(userListElement);
+    fetchAllUsers().then(users => {
+        renderUserList(users);
+    });
 }
+

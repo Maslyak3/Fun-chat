@@ -109,7 +109,7 @@ export function renderLoginPage() {
 }
 
 export function isAuthenticated(): boolean {
-    const userData =  localStorage.getItem("user");
+    const userData =  sessionStorage.getItem("user");
     if (!userData) return false;
     try {
         const user = JSON.parse(userData);
@@ -138,20 +138,16 @@ async function authenticateUser(wsClient: WebSocketClient, login: string, passwo
         };
 
         const handleMessage = (event: MessageEvent) => {
-            console.log("Отримано повідомлення від сервера:", event.data);
             const response = JSON.parse(event.data);
 
             if (response.id !== request.id) {
-                console.log("Це не наша відповідь, ігноруємо.");
-            return;
+                return;
             }
 
             if (response.type === "USER_LOGIN" && response.payload.user.isLogined) {
-                console.log("Авторизація успішна!");
-                localStorage.setItem('user', JSON.stringify(response.payload.user));
+               localStorage.setItem('user', JSON.stringify(response.payload.user));
                 resolve(true);
             } else if (response.type === "ERROR") {
-                console.log("Сервер повернув помилку:", response.payload.error);
                 displayError(response.payload.error);
                 reject(false);
             }
@@ -160,7 +156,7 @@ async function authenticateUser(wsClient: WebSocketClient, login: string, passwo
         };
         wsClient['socket'].addEventListener('message', handleMessage)
         
-        wsClient.send(request);
+        wsClient.sendRequest(request);
 
 
     });
