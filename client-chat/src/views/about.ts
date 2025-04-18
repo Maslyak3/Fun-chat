@@ -21,10 +21,8 @@ export function renderAboutPage() {
     backButton.addEventListener("click", () => {
         if (isAuthenticated()) {
             renderChatPage();
-            console.log('Автентифікований')
-        } else {
+            } else {
         renderLoginPage();
-        console.log('НЕАвтентифікований')
         }
     })
 }

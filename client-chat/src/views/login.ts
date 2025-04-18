@@ -9,7 +9,7 @@ export function renderLoginPage() {
         return;
     }
 
-    document.body.innerHTML = "";
+    // document.body.innerHTML = "";
 
     const title = document.createElement("h1");
     title.textContent = "Login page";
@@ -82,9 +82,7 @@ export function renderLoginPage() {
 
         loginError.textContent = loginValidation ?? "";
         passwordError.textContent = passwordValidation ?? "";
-        console.log("Перед перевіркою валідності пароля та логіну");
         if (!loginValidation && !passwordValidation) {
-            console.log("smth")
             try {
                 const success = await authenticateUser(wsClient, login, password);
                 if (success) {
@@ -145,7 +143,7 @@ async function authenticateUser(wsClient: WebSocketClient, login: string, passwo
             }
 
             if (response.type === "USER_LOGIN" && response.payload.user.isLogined) {
-               localStorage.setItem('user', JSON.stringify(response.payload.user));
+               sessionStorage.setItem('user', JSON.stringify(response.payload.user));
                 resolve(true);
             } else if (response.type === "ERROR") {
                 displayError(response.payload.error);

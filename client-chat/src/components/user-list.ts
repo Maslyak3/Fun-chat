@@ -1,4 +1,5 @@
 import { wsClient } from "../views/login";
+import { MessageType } from "./websocket-client";
 
 export interface User {
     login: string;
@@ -39,21 +40,37 @@ export function renderUserList(users: User[]): void {
         });
 }
 
-export async function fetchAllUsers(): Promise<User[]> {
-    const active = await fetchUsers("USER_ACTIVE");
-    const inactive = await fetchUsers("USER_INACTIVE");
-    return [...active, ...inactive];
+export function fetchAllUsers(): void {
+    // const active = await fetchUsers("USER_ACTIVE");
+    // console.log(active);
+    
+    // const inactive = await fetchUsers("USER_INACTIVE");
+    fetchUsers(MessageType.active);
+    fetchUsers(MessageType.inactive);
+    //return [...active, ...inactive];
 }
 
-function fetchUsers(type: "USER_ACTIVE" | "USER_INACTIVE"): Promise<User[]> {
-    return new Promise((resolve) => {
-        const requestId = Math.random();
-
-        wsClient.sendRequest({
-           id: requestId + '',
-           type: type,
-           payload: null
-        }, resolve);
-        
+function fetchUsers(type: MessageType): void {
+    console.log('fetchUsers');
+    const requestId = Math.random();
+    wsClient.sendRequest({
+        id: requestId + '',
+        type: type,
+        payload: null
     });
 }
+
+// function fetchUsers(type: "USER_ACTIVE" | "USER_INACTIVE"): Promise<User[]> {
+//     console.log('fetchUsers');
+    
+//     return new Promise((resolve) => {
+//         const requestId = Math.random();
+
+//         wsClient.sendRequest({
+//            id: requestId + '',
+//            type: type,
+//            payload: null
+//         }, resolve);
+        
+//     });
+// }
