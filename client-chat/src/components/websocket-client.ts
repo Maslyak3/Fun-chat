@@ -1,3 +1,4 @@
+import { log } from "console";
 import { Socket } from "dgram";
 import { renderUserList, User } from "./user-list";
 
@@ -20,7 +21,6 @@ export class WebSocketClient {
 
         this.socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
             this.handleWWSMessage(message);
             
             });
@@ -44,6 +44,8 @@ export class WebSocketClient {
     
 
     private handleWWSMessage(message: any): void {
+        console.log(message);
+        
         switch (message.type) {
             case MessageType.active:
                 activeArray = message.payload.users;

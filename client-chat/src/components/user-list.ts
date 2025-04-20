@@ -1,12 +1,16 @@
+import { renderChatPage, renderMessages, saveMessage } from "../views/chat";
 import { wsClient } from "../views/login";
 import { MessageType } from "./websocket-client";
+import { sendMessage } from "../views/chat";
 
 export interface User {
     login: string;
     isLogined: boolean;
 }
 
-export function userList(): HTMLElement {
+export let selectedUser: string | null = null;
+
+export function userList(): void {
     const userListContainer = document.createElement('div');
     userListContainer.setAttribute('id', 'user-list');
 
@@ -19,13 +23,20 @@ export function userList(): HTMLElement {
 
     userListContainer.appendChild(searchInput);
     userListContainer.appendChild(usersList);
-    return userListContainer;
+    const chatContainer = document.getElementById("chat");
+    console.log(chatContainer);
+    
+    chatContainer?.append(userListContainer);
+    const userElements = document.querySelectorAll('.user');
+    console.log(userElements);
+  
 } 
 
 export function renderUserList(users: User[]): void {
+       
     const currentUserData = sessionStorage.getItem('user');
     const currentUser = currentUserData ? JSON.parse(currentUserData).login : '';
-
+    userList();
     const usersList = document.getElementById("users");
     if (!usersList) return;
 
@@ -36,22 +47,41 @@ export function renderUserList(users: User[]): void {
         .forEach(user => {
             const userItem = document.createElement('li');
             userItem.textContent = `${user.login}`;
+            userItem.classList.add('user');
+            userItem.setAttribute('id', user.login)
             usersList.appendChild(userItem);
-        });
+            userItem.addEventListener('click', () => {
+                console.log("user click")
+                if (userItem instanceof HTMLElement) {
+                selectedUser = userItem.id || null;
+              
+                renderMessages(selectedUser);
+                const inputField = document.querySelector(".chat-input");
+                const sendButton = document.querySelector(".chat-send-button");
+                if (inputField instanceof HTMLInputElement && sendButton instanceof HTMLButtonElement) {
+                inputField.disabled = false;
+                sendButton.disabled = false;
+                sendButton?.addEventListener("click", () => {
+                    sendMessage(userItem.id, inputField.value)
+                    renderMessages(userItem.id)
+                    console.log("send")
+                })
+                };
+                
+            };
+
+                // inputField.disabled = false;
+                // sendButton.disabled = false;
+            });
+            });
 }
 
 export function fetchAllUsers(): void {
-    // const active = await fetchUsers("USER_ACTIVE");
-    // console.log(active);
-    
-    // const inactive = await fetchUsers("USER_INACTIVE");
     fetchUsers(MessageType.active);
     fetchUsers(MessageType.inactive);
-    //return [...active, ...inactive];
-}
+    }
 
 function fetchUsers(type: MessageType): void {
-    console.log('fetchUsers');
     const requestId = Math.random();
     wsClient.sendRequest({
         id: requestId + '',
@@ -59,18 +89,3 @@ function fetchUsers(type: MessageType): void {
         payload: null
     });
 }
-
-// function fetchUsers(type: "USER_ACTIVE" | "USER_INACTIVE"): Promise<User[]> {
-//     console.log('fetchUsers');
-    
-//     return new Promise((resolve) => {
-//         const requestId = Math.random();
-
-//         wsClient.sendRequest({
-//            id: requestId + '',
-//            type: type,
-//            payload: null
-//         }, resolve);
-        
-//     });
-// }

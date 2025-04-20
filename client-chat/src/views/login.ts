@@ -2,14 +2,16 @@ import { Socket } from "dgram";
 import { renderAboutPage } from "./about";
 import { renderChatPage } from "./chat";
 import { WebSocketClient } from "../components/websocket-client";
+import { fetchAllUsers } from "../components/user-list";
 
 export function renderLoginPage() {
     if (isAuthenticated()) {
+        fetchAllUsers();
         renderChatPage();
         return;
     }
 
-    // document.body.innerHTML = "";
+    document.body.innerHTML = "";
 
     const title = document.createElement("h1");
     title.textContent = "Login page";
@@ -86,6 +88,7 @@ export function renderLoginPage() {
             try {
                 const success = await authenticateUser(wsClient, login, password);
                 if (success) {
+                    fetchAllUsers();
                     renderChatPage();
                 }
             } catch {
