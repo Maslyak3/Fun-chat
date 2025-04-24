@@ -64,7 +64,6 @@ export function renderUserList(users: User[]): void {
                 sendButton?.addEventListener("click", () => {
                     sendMessage(userItem.id, inputField.value)
                     renderMessages(userItem.id)
-                    console.log("send")
                 })
                 };
                 
